@@ -1,11 +1,37 @@
-version: "2.3"
+version: "3"
 
 services:
-  client:
+  react-app:
     build: ./frontend
+    stdin_open: true
     ports:
-      - 3000:3000
-  api:
+      - "3000:3000"
+    networks:
+      - mern-app
+
+  api-server:
     build: ./backend
     ports:
       - 5000:5000
+    depends_on:
+      - mongo
+    networks:
+      - mern-app
+
+  mongo:
+    image: mongo:3.6.19-xenial
+    ports:
+      - "27017:27017"
+    networks:
+      - mern-app
+    volumes:
+      - mongo-data:/data/db
+
+networks:
+  mern-app:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
+
