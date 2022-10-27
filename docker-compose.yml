@@ -12,7 +12,7 @@ services:
   api-server:
     build: ./backend
     ports:
-      - 5000:5000
+      - "5000:5000"
     depends_on:
       - mongo
     networks:
@@ -34,4 +34,3 @@ networks:
 volumes:
   mongo-data:
     driver: local
-
