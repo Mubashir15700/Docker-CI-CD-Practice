@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const tasksRoute = require("./routes/tasks");
 
 mongoose
-  .connect(process.env.MONGO_URL)
+  .connect("mongob://mongo-db:27017/ToDoAppDb")
   .then(() => console.log("Connected"))
   .catch(() => console.log("Not connected"));
 
