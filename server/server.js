@@ -2,10 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
+const cors = require("cors");
 const tasksRoute = require("./routes/tasks");
 
 mongoose
-  .connect("mongob://mongo-db:27017/ToDoAppDb")
+  .connect(process.env.DB_URL)
   .then(() => console.log("Connected"))
   .catch(() => console.log("Not connected"));
 
@@ -15,6 +16,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan());
 
+app.use(cors({
+  origin: "http://react-ui:5173", // Allow requests only from this origin
+  methods: ["GET", "POST", "DELETE"], // Allow only specified HTTP methods
+  credentials: true
+}));
+
 app.use(tasksRoute);
 
-app.listen(5000, console.log("Running on 5000"));
+app.listen(5000, () => console.log("Running on 5000"));

@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  react_app:
+    build: ./client
+    container_name: react-ui
+    ports:
+      - 5173:5173
+    stdin_open: true
+    tty: true
+    depends_on:
+      - server
+    networks:
+      - todo-network
+
+  server:
+    build: ./server
+    container_name: node-api
+    restart: always
+    ports:
+      - 5000:5000
+    depends_on:
+      - mongo_db
+    env_file:
+      - ./server/.env
+    networks:
+      - todo-network
+
+  mongo_db:
+    image: mongo
+    container_name: mongo-db
+    ports:
+      - 27027:27027
+    volumes:
+      - ./backup:/data/db
+    networks:
+      - todo-network
+
+networks:
+  todo-network:
+    driver: bridge

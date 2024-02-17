@@ -1,40 +1,46 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Tasks from "./components/Tasks";
 import TaskForm from "./components/TaskForm";
 import axios from "axios";
+import "./App.css";
 
 const App = () => {
   const [showForm, setShowForm] = useState(false);
   const [tasks, setTasks] = useState([]);
 
+  axios.defaults.withCredentials = true;
+  axios.defaults.baseURL = "http://localhost:5000";
+
   useEffect(() => {
     const fetchTasks = async () => {
-      const { data } = await axios.get("/tasks");
-      console.log(data);
-      setTasks(data);
+      try {
+        const { data } = await axios.get("/tasks");
+        setTasks(data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
     };
     fetchTasks();
   }, []);
 
   const addTask = async (task) => {
-    const res = await fetch("/tasks", {
-      method: "post",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(task),
-    });
-
-    const data = await res.json();
-
-    setTasks([...tasks, data]);
+    try {
+      console.log(task);
+      const { data } = await axios.post("/tasks", task);
+      setTasks([...tasks, data]);
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   };
 
   const deleteTask = async (id) => {
-    await axios.delete(`/tasks/${id}`);
-
-    setTasks(tasks.filter((task) => task._id !== id));
+    try {
+      await axios.delete(`/tasks/${id}`);
+      setTasks(tasks.filter((task) => task._id !== id));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
   };
 
   return (
