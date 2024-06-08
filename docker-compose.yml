@@ -3,7 +3,7 @@ version: '3.8'
 services:
   frontend:
     build:
-      context: ./frontend
+      context: ./client
       dockerfile: Dockerfile
     ports:
       - '3000:3000' # Adjust ports as needed
@@ -12,12 +12,14 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./server
       dockerfile: Dockerfile
     ports:
       - '5000:5000' # Adjust ports as needed
+    env_file:
+      - ./server/.env
     depends_on:
-      - mongo # Assuming you have a MongoDB service
+      - mongo
 
   mongo:
     image: mongo:latest
