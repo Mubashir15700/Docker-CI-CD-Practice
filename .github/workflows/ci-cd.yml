@@ -61,7 +61,7 @@ jobs:
           docker push mubashir15700/todoapp_frontend:latest
           docker push mubashir15700/todoapp_backend:latest
         
-      - name: Deploy to production
-        run: |
+     # - name: Deploy to production
+       # run: |
           # Add your deployment script here, e.g., using SSH to deploy to your server
-          echo "Deploying to production..."
+          # echo "Deploying to production..."
