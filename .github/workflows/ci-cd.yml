@@ -1,0 +1,67 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies and build frontend
+        run: |
+          cd client
+          npm install
+          npm run build
+
+      - name: Install dependencies and build backend
+        run: |
+          cd server
+          npm install
+
+      - name: Run backend tests
+        run: |
+          cd server
+          npm test
+
+      - name: Build and push Docker images
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_CLI_EXPERIMENTAL: enabled
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker build -t mubashir15700/todoapp_frontend:latest ./client
+          docker build -t mubashir15700/todoapp_backend:latest ./server
+          docker push mubashir15700/todoapp_frontend:latest
+          docker push mubashir15700/todoapp_backend:latest
+        
+      - name: Deploy to production
+        run: |
+          # Add your deployment script here, e.g., using SSH to deploy to your server
+          echo "Deploying to production..."
