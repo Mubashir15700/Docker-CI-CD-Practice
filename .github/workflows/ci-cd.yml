@@ -17,11 +17,11 @@ jobs:
         image: mongo:latest
         ports:
           - 27017:27017
-        options: >-
-          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+      healthcheck:
+        test: ["CMD-SHELL", "mongo --eval 'db.runCommand({ ping: 1 })'"] # Health check command
+        interval: 10s  # Check the health status every 10 seconds
+        timeout: 5s    # Maximum time allowed for each health check attempt
+        retries: 5     # Number of retries before considering the container unhealthy
 
     steps:
       - name: Checkout code
